@@ -170,12 +170,18 @@ public class BackendInterfaceHelper extends HashTableMap<String, LinkedList<Movi
 		// TODO Auto-generated method stub
 		// checks the first character
 		String rating1 = Character.toString(rating.charAt(0));
-		String rating2 = Character.toString(rating.charAt(1));
-		// needs to see if rating is a 10
-		if (rating1.equals("1") && rating2.equals("0")){
-			rating1 = "10";
+		if (rating.length() > 1) {
+			String rating2 = Character.toString(rating.charAt(1));
+			if (rating1.equals("1") && rating2.equals("0")){
+				rating1 = "10.0";
+			} else {
+				rating1 = rating1 +".0";
+			}
 		}
+		// needs to see if rating is a 10
+		
 		// checks if it exists and adds it
+
 		if (ratingTable.containsKey(rating1)) {
 			ratings.add(rating1);
 		}
@@ -233,15 +239,13 @@ public class BackendInterfaceHelper extends HashTableMap<String, LinkedList<Movi
 	public int getNumberOfMovies() {
 		// TODO Auto-generated method stub
 		int size = 0;
+
 		// first checks genres sizes to see how many genres are there, uses this to find number of movies
 		// with all of those genres
-		if (genres != null) {
-			// checks if size is 0 and returns 0
-			if (genres.size() == 0) {
-				return 0;
+		if (genres != null && genres.size() != 0) {
 				// checks at size 1
-			} else if (genres.size() == 1) {
-				return genreTable.get(genres.get(0)).size();
+			if (genres.size() == 1) {
+				size += genreTable.get(genres.get(0)).size();
 			// checks at size 2 for genres by scanning one linkedlist and checking if other genre is in the movie
 			} else if (genres.size() == 2){
 				for (int i = 0; i < genreTable.get(genres.get(0)).size(); i++) {
@@ -272,15 +276,16 @@ public class BackendInterfaceHelper extends HashTableMap<String, LinkedList<Movi
 				}
 			}
 			// now checks the ratings array
-		} else if (ratings != null){
-			if (ratings.size() == 0) {
-				return 0;
+
+		} else if (ratings != null && ratings.size() != 0){
 				// if size is 1, then return size of whole array
-			} else if (ratings.size() == 1) {
-				return ratingTable.get(ratings.get(0)).size();
+			if (ratings.size() >= 1) {
+				for (int i = 0; i < ratings.size(); i++) {
+					size += ratingTable.get(ratings.get(i)).size();
+				}
 				// movies cannot have more than one rating
 			} else {
-				return 0;
+				return size;
 			}
 		}
 		return size;
@@ -295,32 +300,22 @@ public class BackendInterfaceHelper extends HashTableMap<String, LinkedList<Movi
 	public List<MovieInterface> getThreeMovies(int startingIndex) {
 		// TODO Auto-generated method stub
 		List<MovieInterface> endList = new ArrayList<>();
+		List<MovieInterface> finalList = new ArrayList<>();
 			// checks size of genres as different cases
 		// uses similar process from getNumberOfMovies(), but instead adds only 3 values to array
-		if (genres != null) {
-			// size 0
-			if (genres.size() == 0) {
-				return endList;
-				// size 1
-			} else if (genres.size() == 1) {
-				for (int i = startingIndex; i < genreTable.get(genres.get(0)).size(); i++) {
+		if (genres != null && genres.size() != 0) {
+			if (genres.size() == 1) {
+				for (int i = 0; i < genreTable.get(genres.get(0)).size(); i++) {
 					if (genreTable.get(genres.get(0)).get(i) != null) {
-						// cant have over 3 movies
-						if (endList.size() < 3) {
-							// adds movieInterface
-							endList.add(genreTable.get(genres.get(0)).get(i));
-						} else {
-							break;
-						}
-					}
+						endList.add(genreTable.get(genres.get(0)).get(i));
+					} 
 				}
 				// size 2
 			} else if (genres.size() == 2) {
 						for (int i = 0; i < genreTable.get(genres.get(0)).size(); i++) {
 							if (genreTable.get(genres.get(0)).get(i).getGenres().contains(genres.get(1))) {
-								if (endList.size() < 3) {
-									endList.add(genreTable.get(genres.get(0)).get(i));
-								}
+								endList.add(genreTable.get(genres.get(0)).get(i));
+								
 							}
 						}
 						// size 3
@@ -328,9 +323,7 @@ public class BackendInterfaceHelper extends HashTableMap<String, LinkedList<Movi
 				for (int i = 0; i < genreTable.get(genres.get(0)).size(); i++) {
 					if (genreTable.get(genres.get(0)).get(i).getGenres().contains(genres.get(1))) {
 						if (genreTable.get(genres.get(0)).get(i).getGenres().contains(genres.get(2))) {
-							if (endList.size() < 3) {
 								endList.add(genreTable.get(genres.get(0)).get(i));
-							}
 						}
 					}
 				}
@@ -340,35 +333,33 @@ public class BackendInterfaceHelper extends HashTableMap<String, LinkedList<Movi
 					if (genreTable.get(genres.get(0)).get(i).getGenres().contains(genres.get(1))) {
 						if (genreTable.get(genres.get(0)).get(i).getGenres().contains(genres.get(2))) {
 							if (genreTable.get(genres.get(0)).get(i).getGenres().contains(genres.get(3))) {
-								if (endList.size() < 3) {
-									endList.add(genreTable.get(genres.get(0)).get(i));
-								}
+								endList.add(genreTable.get(genres.get(0)).get(i));
+							
 							}
 						}
 					}
 				}
 			}
 			// checks ratings similarly to getNumberOfMovies()
-		} else if (ratings != null) {
+			
+		} else if (ratings != null || ratings.size() != 0) {
 			// this checks if we are dealing with the rating map
-			// checks all sizes again
-			if (ratings.size() == 0) {
-				return endList;
 			// adds at size 1 in the same way the genre map does
-			} else if (ratings.size() == 1) {
-				for (int i = startingIndex; i < ratingTable.get(ratings.get(0)).size(); i++) {
-					if (ratingTable.get(ratings.get(0)).get(i) != null) {
-						if (endList.size() < 3) {
-							endList.add(ratingTable.get(ratings.get(0)).get(i));
+			//System.out.println(ratings.size());
+			if (ratings.size() >= 1) {
+				for (int j = 0; j < ratings.size(); j++) {
+					for (int i = 0; i < ratingTable.get(ratings.get(j)).size(); i++) {
+						if (ratingTable.get(ratings.get(j)).get(i) != null) {
+							endList.add(ratingTable.get(ratings.get(j)).get(i));
 						} else {
 							break;
 						}
+						
 					}
 				}
-				// if the input is multiple ratings, no movie can have two avg ratings
-			} else {
-				return endList;
 			}
+				// if the input is multiple ratings, no movie can have two avg ratings
+			
 		}
 		
 		// this for loop will put the list in descending order by rating
@@ -386,8 +377,14 @@ public class BackendInterfaceHelper extends HashTableMap<String, LinkedList<Movi
 				}
 			}
 		}
+		// adds the three movies from the resulting set to the final answer
+		for (int i = startingIndex; i < endList.size(); i++) {
+			if (endList.get(i) != null) {
+				finalList.add(endList.get(i));
+			}
+		}
 
-		return endList;
+		return finalList;
 			
 	}
 
