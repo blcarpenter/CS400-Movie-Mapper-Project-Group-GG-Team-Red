@@ -1,3 +1,12 @@
+// --== CS400 File Header Information ==--
+// Name: Junaid Ackroyd
+// Email: jackroyd@wisc.edu
+// Team: GG Red
+// Role: Data Wrangler
+// TA: Surabhi
+// Lecturer: Gary Dahl
+// Notes to Grader: None
+
 import java.io.StringReader;
 import java.util.Collections;
 import java.util.List;
