@@ -1,4 +1,11 @@
-
+// --== CS400 File Header Information ==--
+// Name: Tate Riordan
+// Email: triordan2@wisc.edu
+// Team: Red
+// Group: GG
+// TA: Surabhi
+// Lecturer: Gary Dahl
+// Notes to Grader: n/a
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.Reader;
