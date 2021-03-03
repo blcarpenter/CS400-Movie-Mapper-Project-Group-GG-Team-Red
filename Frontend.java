@@ -5,20 +5,11 @@ import java.util.Scanner;
 
 public class Frontend  {
     BackendInterfaceHelper backend ;
-    static String[] ratings = {"*0","*1","*2","*3","*4","*5","*6","*7","*8","*9","*10"};
+    static String[] ratings = {"0","1","2","3","4","5","6","7","8","9","10"};
     List<MovieInterface> topThreeMovies;
     private  static String[] genres;
 
-    public Frontend(String[] input) {
-        this.backend = new BackendInterfaceHelper(input);
-        selectall();
-        this.topThreeMovies =  backend.getThreeMovies(0);
-        List<String> foo = backend.getGenres();
-        this.genres = new String[foo.size()];
-        for(int i = 0 ; i < foo.size();i++){
-            genres[i] = foo.get(i);
-        }
-
+    public Frontend() {
     }
     public Frontend(Reader r) {
         this.backend = new BackendInterfaceHelper(r);
@@ -31,7 +22,15 @@ public class Frontend  {
             genres[i] = foo.get(i);
         }
     }
-    public void run(){
+    public void run(BackendInterfaceHelper helper){
+        this.backend =helper;
+        selectall();
+        this.topThreeMovies =  backend.getThreeMovies(0);
+        List<String> foo = backend.getAllGenres();
+        this.genres = new String[foo.size()];
+        for(int i = 0 ; i < foo.size();i++){
+            genres[i] = foo.get(i);
+        }
         backend.addAvgRating("10");
         boolean exit = false;
         while(!exit){
@@ -46,11 +45,11 @@ public class Frontend  {
             Scanner scan = new Scanner(System.in);
             System.out.println("Select movie by pressing the corresponding number on the key pad or press r to go to ratings or g to go to genre mode or x to exit");
             String res = scan.next();
-            if(res.toString().toLowerCase().equals("r")){
+            if(res.toLowerCase().equals("r")){
                 ratingsMenu();
-            }else if (res.toString().toLowerCase().equals("g")){
+            }else if (res.toLowerCase().equals("g")){
                 genreMenu();
-            } else if (res.toString().toLowerCase().equals("x")) {
+            } else if (res.toLowerCase().equals("x")) {
                 exit =true;
             } else if((Integer.parseInt(res) > 0) && (Integer.parseInt(res) < 4)){
                 displayMovie(topThreeMovies.get(Integer.parseInt(res) - 1));
@@ -88,7 +87,7 @@ public class Frontend  {
         ArrayList<MovieInterface> matches = new ArrayList<>();
         for(int i = 0 ; i < 11;i++) {
             List<MovieInterface> three = backend.getThreeMovies(0);
-            for (int j = 0; j < 4; j++) {//rremebr to change back
+            for (int j = 0; j < three.size(); j++) {//rremebr to change back
                 if (!(three.size() == 0)) {
                     matches.add(three.get(j));
                 }
@@ -138,9 +137,9 @@ public class Frontend  {
         responses.add(Integer.parseInt(s.substring(s.length()-1)));
         for(int res: responses){
             if(ratings[res].contains("*")){
-                removerating(Integer.toString(res));
+                removeGenre(Integer.toString(res));
             }else{
-                addRating(Integer.toString(res));
+                addGenre(Integer.toString(res));
             }
         }
         for(int res: responses){
@@ -152,8 +151,8 @@ public class Frontend  {
         }
         ArrayList<MovieInterface> matches = new ArrayList<>();
         for(int i = 0 ; i < genres.length/3;i++){
-            List<MovieInterface> three = backend.getThreeMovies(i*3);
-            for(int j =0;j<3;j++){
+            List<MovieInterface> three = backend.getThreeMovies(0);
+            for(int j =0;j<three.size();j++){
                 matches.add(three.get(j));
             }
         }
