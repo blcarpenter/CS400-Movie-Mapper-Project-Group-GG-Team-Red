@@ -17,10 +17,11 @@ switched betweenAt a press of a button. R to enter ratings. G to enter genres.
 TestsFrontend.java tests the frontend java class with mock inputs to make sure the correct function is done at each time. 
 An example is the exit function. 
  
-Additional Contributions:assisting the backend developer, and working on BackendDummy class
+Additional Contributions:assisting the backend developer, and working on BackendDummy class writting tests for the frontend class
 -------------------------
 I helped Tate work out a bug that let us integrate our code together
 I also added things to Backend Dummy class
+wrote some test to test the frontend class
 
 Signature:Alexander Dudin
 ----------
