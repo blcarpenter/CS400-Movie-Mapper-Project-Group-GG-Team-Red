@@ -1,27 +1,23 @@
-import java.io.Reader;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
+/**
+ * // --== CS400 File Header Information ==--
+ * // Name: Alexander Dudin
+ * // Email: dudin@wisc.edu
+ * // Team: Red
+ * // Group: GG
+ * // TA: Surabhi
+ * // Lecturer: Gary Dahl
+ * // Notes to Grader: n/a
+ */
 public class Frontend  {
     BackendInterfaceHelper backend ;
-    static String[] ratings = {"0","1","2","3","4","5","6","7","8","9","10"};
+    static String[] ratings = {"*0","*1","*2","*3","*4","*5","*6","*7","*8","*9","*10"};
     List<MovieInterface> topThreeMovies;
     private  static String[] genres;
 
-    public Frontend() {
-    }
-    public Frontend(Reader r) {
-        this.backend = new BackendInterfaceHelper(r);
-        selectall();
-        this.topThreeMovies =  backend.getThreeMovies(0);
-        selectall();
-        List<String> foo = backend.getGenres();
-        this.genres = new String[foo.size()];
-        for(int i = 0 ; i < foo.size();i++){
-            genres[i] = foo.get(i);
-        }
-    }
     public void run(BackendInterfaceHelper helper){
         this.backend =helper;
         selectall();
@@ -86,7 +82,7 @@ public class Frontend  {
         }
         ArrayList<MovieInterface> matches = new ArrayList<>();
         for(int i = 0 ; i < 11;i++) {
-            List<MovieInterface> three = backend.getThreeMovies(0);
+            List<MovieInterface> three = backend.getThreeMovies(i*3);
             for (int j = 0; j < three.size(); j++) {//rremebr to change back
                 if (!(three.size() == 0)) {
                     matches.add(three.get(j));
@@ -151,7 +147,7 @@ public class Frontend  {
         }
         ArrayList<MovieInterface> matches = new ArrayList<>();
         for(int i = 0 ; i < genres.length/3;i++){
-            List<MovieInterface> three = backend.getThreeMovies(0);
+            List<MovieInterface> three = backend.getThreeMovies(i*3);
             for(int j =0;j<three.size();j++){
                 matches.add(three.get(j));
             }
@@ -263,7 +259,7 @@ public class Frontend  {
     }
     private void selectall(){
         for(int i  = 0 ; i <11;i++){
-            backend.addAvgRating(Integer.toString(i));
+            backend.addAvgRating(Double.toString(i));
         }
     }
     private String prints(String s){
