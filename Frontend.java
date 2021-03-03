@@ -1,7 +1,3 @@
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Scanner;
-
 /**
  * // --== CS400 File Header Information ==--
  * // Name: Alexander Dudin
@@ -12,8 +8,16 @@ import java.util.Scanner;
  * // Lecturer: Gary Dahl
  * // Notes to Grader: n/a
  */
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Scanner;
+
+/**
+ * this class is used as the interface to work with the back end and get the desired outputs for movies.
+ * @author alexdudin
+ */
 public class Frontend  {
-    private BackendInterfaceHelper backend ;// an instance of backend
+    private Backend backend ;// an instance of backend
     private String[] ratings = {"*0","*1","*2","*3","*4","*5","*6","*7","*8","*9","*10"};// a array of ratings
     private List<MovieInterface> topThreeMovies;// the top trhee movies
     private  static String[] genres;//the added genres
@@ -22,7 +26,7 @@ public class Frontend  {
      * main method that runs all of the front end
      * @param helper an instance of the backend
      */
-    public void run(BackendInterfaceHelper helper){//
+    public void run(Backend helper){//
         this.backend =helper;
         selectall();// priv helpe method to select all ratings
         this.topThreeMovies =  backend.getThreeMovies(0);// gets the top three
@@ -33,6 +37,7 @@ public class Frontend  {
             genres[i] = genresTemp.get(i);
         }
         boolean exit = false;
+        Scanner scan = new Scanner(System.in);
         while(!exit){// while it is not trigered it loops
             int count = 1;
             //prints a menu of the top three
@@ -42,22 +47,24 @@ public class Frontend  {
                 System.out.println();
                 count++;
             }
-            System.out.println();
-            Scanner scan = new Scanner(System.in);
+         //   System.out.println();
             System.out.println("Select movie by pressing the corresponding number on the key pad or press r to go to ratings or g to go to genre mode or x to exit");
-            String res = scan.next();
-            //sees what they want to do
-            if(res.toLowerCase().equals("r")){
-                ratingsMenu();// goes to the rating menu
-            }else if (res.toLowerCase().equals("g")){
-                genreMenu();//goes to the genre menu
-            } else if (res.toLowerCase().equals("x")) {
-                exit =true;// exits
-            } else if((Integer.parseInt(res) > 0) && (Integer.parseInt(res) < 4)){
-                displayMovie(topThreeMovies.get(Integer.parseInt(res) - 1));// gets a close up of the top three
-            }else{
-                System.out.println("respond with correct response");// prompts them to give a valid response
+            if(scan.hasNextLine()){
+                String res = scan.nextLine();
+                //sees what they want to do
+                if(res.toLowerCase().equals("r")){
+                    ratingsMenu();// goes to the rating menu
+                }else if (res.toLowerCase().equals("g")){
+                    genreMenu();//goes to the genre menu
+                } else if (res.toLowerCase().equals("x")) {
+                    exit =true;// exits
+                } else if((Integer.parseInt(res) > 0) && (Integer.parseInt(res) < 4)){
+                    displayMovie(topThreeMovies.get(Integer.parseInt(res) - 1));// gets a close up of the top three
+                }else{
+                    System.out.println("respond with correct response");// prompts them to give a valid response
+                }
             }
+
         }
     }
 
@@ -67,87 +74,96 @@ public class Frontend  {
     public void ratingsMenu() {
         Scanner scan = new Scanner(System.in);
         //prompts the user
-        System.out.println("Select ratings that you want to watch\n A star means it is selected\nPress the number you want to select or deselect\n Enter it in a line separated by spaces");
+        System.out.println("Select ratings that you want to watch\nA star means it is selected\nPress the number you want to select or deselect\nEnter it in a line separated by spaces\nOr x to exit");
         for (String rating : ratings) {
             System.out.println(rating);
         }
         ArrayList<Integer> responses = new ArrayList<>();
-        String s = scan.nextLine();
-        s = s.replaceAll(" ", "");
-        //gets a list of all of the things they want to deselect or select
-        if(s.length() !=0){
-            for(int i = 0 ; i<s.length()-1;i++){
-                responses.add(Integer.parseInt(s.substring(i,i+1)));
-            }
-            responses.add(Integer.parseInt(s.substring(s.length()-1)));
-        }
-        //does the deselecting or selecting
-        for(int res: responses){
-            if(ratings[res].contains("*")){
-                removerating(Integer.toString(res));
-            }else{
-                addRating(Integer.toString(res));
-            }
-        }
-        //gets all of the things that match the given critiria
-        ArrayList<MovieInterface> matches = new ArrayList<>();
-        for(int i = 0 ; i < 4;i++) {
-            List<MovieInterface> three = backend.getThreeMovies(i*3);
-            for (int j = 0; j < three.size(); j++) {
-                if (!(three.size() == 0)) {
-                    matches.add(three.get(j));
+        if(scan.hasNextLine()){
+            String s = scan.nextLine();
+            if(!s.toLowerCase().equals("x")){
+                s = s.replaceAll(" ", "");
+                //gets a list of all of the things they want to deselect or select
+                if(s.length() !=0){
+                    for(int i = 0 ; i<s.length()-1;i++){
+                        responses.add(Integer.parseInt(s.substring(i,i+1)));
+                    }
+                    responses.add(Integer.parseInt(s.substring(s.length()-1)));
                 }
+                //does the deselecting or selecting
+                for(int res: responses){
+                    if(ratings[res].contains("*")){
+                        removerating(Integer.toString(res));
+                    }else{
+                        addRating(Integer.toString(res));
+                    }
+                }
+                //gets all of the things that match the given critiria
+                ArrayList<MovieInterface> matches = new ArrayList<>();
+                for(int i = 0 ; i < 4;i++) {
+                    List<MovieInterface> three = backend.getThreeMovies(i*3);
+                    for (int j = 0; j < three.size(); j++) {
+                        if (!(three.size() == 0)) {
+                            matches.add(three.get(j));
+                        }
+                    }
+                }
+                System.out.println(backend.getNumberOfMovies()+" is the amount of matches ");
+                if(backend.getNumberOfMovies() == 0){
+                    System.out.println(" Unfortunately there are no matching criteria");
+                }
+                displaylist(matches);
             }
         }
-        System.out.println(backend.getNumberOfMovies()+" is the amount of matches ");
-        if(backend.getNumberOfMovies() == 0){
-            System.out.println(" Unfortunately there are no matching criteria");
-        }
-         displaylist(matches);
+
     }
 
     public void genreMenu() {
         Scanner scan = new Scanner(System.in);
 
-        System.out.println("Select genre that you want to watch\nA star means it is selected\nPress the number you want to select or deselect\nEnter it in a line separated by spaces");
+        System.out.println("Select genre that you want to watch\nA star means it is selected\nPress the number you want to select or deselect\nEnter it in a line separated by spaces.\n Or x to leave");
         int count = 0;
         for (String genre : genres) {
             System.out.println(count +": "+genre);
             count++;
         }
         ArrayList<Integer> responses = new ArrayList<>();
-        String s = scan.nextLine();
-        s = s.replaceAll(" ", "");
-        for(int i = 0 ; i<s.length()-1;i++){
-            responses.add(Integer.parseInt(s.substring(i,i+1)));
+        if(scan.hasNextLine()){
+            String s = scan.nextLine();
+            if(!(s.toLowerCase().equals("x"))){
+                s = s.replaceAll(" ", "");
+                for(int i = 0 ; i<s.length()-1;i++){
+                    responses.add(Integer.parseInt(s.substring(i,i+1)));
+                }
+                responses.add(Integer.parseInt(s.substring(s.length()-1)));
+                for(int res: responses){
+                    if(ratings[res].contains("*")){
+                        removeGenre(Integer.toString(res));
+                    }else{
+                        addGenre(Integer.toString(res));
+                    }
+                }
+                for(int res: responses){
+                    if(genres[res].contains("*")){
+                        removeGenre(Integer.toString(res));
+                    }else{
+                        addGenre(Integer.toString(res));
+                    }
+                }
+                ArrayList<MovieInterface> matches = new ArrayList<>();
+                for(int i = 0 ; i < genres.length/3;i++){
+                    List<MovieInterface> three = backend.getThreeMovies(i*3);
+                    for(int j =0;j<three.size();j++){
+                        matches.add(three.get(j));
+                    }
+                }
+                System.out.println(backend.getNumberOfMovies()+" is the amount of matches ");
+                if(backend.getNumberOfMovies() == 0){
+                    System.out.println(" Unfortunately there are no matching criteria");
+                }
+                displaylist(matches);
         }
-        responses.add(Integer.parseInt(s.substring(s.length()-1)));
-        for(int res: responses){
-            if(ratings[res].contains("*")){
-                removeGenre(Integer.toString(res));
-            }else{
-                addGenre(Integer.toString(res));
-            }
         }
-        for(int res: responses){
-            if(genres[res].contains("*")){
-                removeGenre(Integer.toString(res));
-            }else{
-                addGenre(Integer.toString(res));
-            }
-        }
-        ArrayList<MovieInterface> matches = new ArrayList<>();
-        for(int i = 0 ; i < genres.length/3;i++){
-            List<MovieInterface> three = backend.getThreeMovies(i*3);
-            for(int j =0;j<three.size();j++){
-                matches.add(three.get(j));
-            }
-        }
-        System.out.println(backend.getNumberOfMovies()+" is the amount of matches ");
-        if(backend.getNumberOfMovies() == 0){
-            System.out.println(" Unfortunately there are no matching criteria");
-        }
-        displaylist(matches);
     }
 
     /**
