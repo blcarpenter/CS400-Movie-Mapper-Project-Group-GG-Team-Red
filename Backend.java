@@ -10,9 +10,7 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.Reader;
-import java.io.StringReader;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.zip.DataFormatException;
@@ -67,7 +65,7 @@ public class Backend extends HashTableMap<String, LinkedList<MovieInterface>> im
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-			// this for loop makes a hash map with the ratings as keys
+			// this for loop makes a hash map with the ratings as keys. sets all rating keys in place from 0-10
 			for (int j = 0; j < 11; j++) {
 				String ratingHelper = j + ".0";
 				ratingTable.put(ratingHelper, new LinkedList<MovieInterface>());
@@ -75,7 +73,6 @@ public class Backend extends HashTableMap<String, LinkedList<MovieInterface>> im
 			for (int i = 0; i < movieArray.size(); i++) {
 				//this.addAvgRating(Double.toString(Math.floor(movieArray.get(i).getAvgVote())));
 				String rating = Double.toString(Math.floor(movieArray.get(i).getAvgVote()));
-				// adds it if key does not exist already
 				// adds it
 				this.ratingTable.get(rating).add(movieArray.get(i));
 			}
@@ -127,7 +124,7 @@ public class Backend extends HashTableMap<String, LinkedList<MovieInterface>> im
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-			// this for loop makes a hash map with the ratings as keys
+			// this for loop makes a hash map with the ratings as keys from 0-10
 			for (int j = 0; j < 11; j++) {
 				String ratingHelper = j + ".0";
 				ratingTable.put(ratingHelper, new LinkedList<MovieInterface>());
@@ -183,8 +180,10 @@ public class Backend extends HashTableMap<String, LinkedList<MovieInterface>> im
 		// TODO Auto-generated method stub
 		// checks the first character
 		String rating1 = Character.toString(rating.charAt(0));
+		// checks if length is more than 1 to see if it is 10
 		if (rating.length() > 1) {
 			String rating2 = Character.toString(rating.charAt(1));
+			// makes it a string in the form of a double like 10.0
 			if (rating1.equals("1") && rating2.equals("0")){
 				rating1 = "10.0";
 			} else {
@@ -262,6 +261,7 @@ public class Backend extends HashTableMap<String, LinkedList<MovieInterface>> im
 			} else if (genres.size() == 2){
 				for (int i = 0; i < genreTable.get(genres.get(0)).size(); i++) {
 					if (genreTable.get(genres.get(0)).get(i).getGenres().contains(genres.get(1))) {
+						// increments size
 						size += 1;
 					}
 				}
@@ -269,7 +269,9 @@ public class Backend extends HashTableMap<String, LinkedList<MovieInterface>> im
 			} else if (genres.size() == 3) {
 				for (int i = 0; i < genreTable.get(genres.get(0)).size(); i++) {
 					if (genreTable.get(genres.get(0)).get(i).getGenres().contains(genres.get(1))) {
+						// needs to check for third genre
 						if (genreTable.get(genres.get(0)).get(i).getGenres().contains(genres.get(2))) {
+							// increments size
 							size += 1;
 						}
 				
@@ -279,8 +281,10 @@ public class Backend extends HashTableMap<String, LinkedList<MovieInterface>> im
 			} else if (genres.size() == 4) {
 				for (int i = 0; i < genreTable.get(genres.get(0)).size(); i++) {
 					if (genreTable.get(genres.get(0)).get(i).getGenres().contains(genres.get(1))) {
+						// need to check for third and fourth genres
 						if (genreTable.get(genres.get(0)).get(i).getGenres().contains(genres.get(2))) {
 							if (genreTable.get(genres.get(0)).get(i).getGenres().contains(genres.get(3))) {
+								// increments size
 								size += 1;
 							}
 						}
@@ -317,6 +321,7 @@ public class Backend extends HashTableMap<String, LinkedList<MovieInterface>> im
 		// uses similar process from getNumberOfMovies(), but instead adds only 3 values to array
 		if (genres != null && genres.size() != 0) {
 			if (genres.size() == 1) {
+				// goes thru the genre linked list and adds them all to endlist
 				for (int i = 0; i < genreTable.get(genres.get(0)).size(); i++) {
 					if (genreTable.get(genres.get(0)).get(i) != null) {
 						endList.add(genreTable.get(genres.get(0)).get(i));
@@ -324,6 +329,7 @@ public class Backend extends HashTableMap<String, LinkedList<MovieInterface>> im
 				}
 				// size 2
 			} else if (genres.size() == 2) {
+				// goes thru linked list and checks if the two genres are in the movie object
 						for (int i = 0; i < genreTable.get(genres.get(0)).size(); i++) {
 							if (genreTable.get(genres.get(0)).get(i).getGenres().contains(genres.get(1))) {
 								endList.add(genreTable.get(genres.get(0)).get(i));
@@ -332,6 +338,7 @@ public class Backend extends HashTableMap<String, LinkedList<MovieInterface>> im
 						}
 						// size 3
 			} else if (genres.size() == 3) {
+				// goes thru one linked list and checks if all three genres are in movie object
 				for (int i = 0; i < genreTable.get(genres.get(0)).size(); i++) {
 					if (genreTable.get(genres.get(0)).get(i).getGenres().contains(genres.get(1))) {
 						if (genreTable.get(genres.get(0)).get(i).getGenres().contains(genres.get(2))) {
@@ -341,6 +348,7 @@ public class Backend extends HashTableMap<String, LinkedList<MovieInterface>> im
 				}
 				// size 4
 			} else if (genres.size() == 4) {
+				// goes thru linked list and checks if all 4 genres are in movie object
 				for (int i = 0; i < genreTable.get(genres.get(0)).size(); i++) {
 					if (genreTable.get(genres.get(0)).get(i).getGenres().contains(genres.get(1))) {
 						if (genreTable.get(genres.get(0)).get(i).getGenres().contains(genres.get(2))) {
@@ -434,4 +442,3 @@ public class Backend extends HashTableMap<String, LinkedList<MovieInterface>> im
 		return helper;
 	}
 }
-
